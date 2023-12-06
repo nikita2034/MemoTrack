@@ -1,0 +1,29 @@
+.main_section{
+    padding-top: 80px;
+    padding-left: 50px;
+    padding-right: 50px;
+    width: auto;
+    .header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .title{
+     font-size: 28px;
+     font-weight: 600;
+    }
+    }
+    .notes_description{
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: 400;
+        max-width:850px; 
+        word-wrap: break-word; 
+    }
+    .search_bar{
+        margin-top: 20px;
+        max-width: 400px;
+    }
+    .note_list{
+        margin-top: 35px;
+    }
+}
