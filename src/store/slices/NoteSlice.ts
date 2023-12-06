@@ -104,6 +104,44 @@ export const deleteNote = createAsyncThunk(
   }
 );
 
+// export const searchNotesByTitle = createAsyncThunk<Note[], string>(
+//   "notes/searchNotesByTitle",
+//   async (searchTerm: string) => {
+//     try {
+//       const db = await openDB();
+//       const transaction = db.transaction(["notes"], "readonly");
+//       const objectStore = transaction.objectStore("notes");
+//       const index = objectStore.index("title");
+
+//       const range = IDBKeyRange.bound(
+//         searchTerm.toLowerCase(),
+//         searchTerm.toLowerCase() + "\uffff"
+//       );
+//       const request = index.openCursor(range);
+
+//       const foundNotes: Note[] = [];
+
+//       request.onsuccess = (event) => {
+//         const cursor = (event.target as IDBRequest).result;
+//         if (cursor) {
+//           foundNotes.push(cursor.value);
+//           cursor.continue();
+//         }
+//       };
+
+//       return new Promise<Note[]>((resolve, reject) => {
+//         transaction.oncomplete = () => {
+//           resolve(foundNotes);
+//         };
+//         transaction.onerror = () => {
+//           reject("Error searching notes");
+//         };
+//       });
+//     } catch (error) {
+//       throw new Error("Error searching notes");
+//     }
+//   }
+// );
 export const searchNotesByTitle = createAsyncThunk<Note[], string>(
   "notes/searchNotesByTitle",
   async (searchTerm: string) => {
@@ -113,18 +151,19 @@ export const searchNotesByTitle = createAsyncThunk<Note[], string>(
       const objectStore = transaction.objectStore("notes");
       const index = objectStore.index("title");
 
-      const range = IDBKeyRange.bound(
-        searchTerm.toLowerCase(),
-        searchTerm.toLowerCase() + "\uffff"
-      );
-      const request = index.openCursor(range);
+      const lowerCaseSearchTerm = searchTerm.toLowerCase(); // Преобразование к нижнему регистру
+
+      const request = index.openCursor();
 
       const foundNotes: Note[] = [];
 
       request.onsuccess = (event) => {
         const cursor = (event.target as IDBRequest).result;
         if (cursor) {
-          foundNotes.push(cursor.value);
+          const noteTitle = cursor.value.title.toLowerCase(); // Преобразование заголовка к нижнему регистру
+          if (noteTitle.includes(lowerCaseSearchTerm)) {
+            foundNotes.push(cursor.value);
+          }
           cursor.continue();
         }
       };
@@ -142,6 +181,7 @@ export const searchNotesByTitle = createAsyncThunk<Note[], string>(
     }
   }
 );
+
 
 export const updateNote = createAsyncThunk<Note, Note>(
   "notes/updateNote",
